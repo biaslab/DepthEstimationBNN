@@ -37,7 +37,7 @@ function normalization_constant(p::TruncatedPoisson)
 end
 
 function pdf(p::TruncatedPoisson, x::Int) 
-    if min_support(p) <= x <= max_support(p)
+    if x in support(p)
         return pdf(Poisson(get_λ(p)), x) / normalization_constant(p)
     else
         return 0

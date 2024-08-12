@@ -35,7 +35,7 @@
     end
 
     for n = 1.0:10.0
-        p = TruncatedPoisson(n)
+        p = TruncatedPoisson(n; warn=false)
         q = Poisson(n)
         pdf_p = map(x -> pdf(p, x), support(p))
         pdf_q = map(x -> pdf(q, x), support(p))
