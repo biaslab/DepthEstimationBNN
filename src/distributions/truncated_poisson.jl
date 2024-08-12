@@ -29,7 +29,8 @@ get_iλ(p::SafeTruncatedPoisson{N,M,<:Real}) where { N, M } = p.iλ
 get_iλ(p::SafeTruncatedPoisson{N,M,<:AbstractArray}) where { N, M } = p.iλ[1]
 get_λ(p::SafeTruncatedPoisson) = softplus(get_iλ(p))
 
-min_support(λ) = Int(max(floor(λ - log(2)), 0))
+# min_support(λ) = Int(max(floor(λ - log(2)), 0)) # bound on median!
+min_support(λ) = 0
 max_support(λ) = Int(ceil(1.3 * λ + 5))
 min_support(p::Union{TruncatedPoisson, SafeTruncatedPoisson}) = min_support(get_λ(p))
 max_support(p::Union{TruncatedPoisson, SafeTruncatedPoisson}) = max_support(get_λ(p))
