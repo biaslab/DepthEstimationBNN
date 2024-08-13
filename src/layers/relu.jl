@@ -5,6 +5,9 @@ struct ReLU end
 function (l::ReLU)(x_mean, x_var)
     return relu(x_mean, x_var)
 end
+(l::ReLU)(x) = relu(x)
+
+relu(x; l=0.0) = max.(l.*x, x)
 
 function relu(m, v)
     s = sqrt.(v)
