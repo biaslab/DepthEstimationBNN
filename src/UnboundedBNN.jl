@@ -13,6 +13,7 @@ include("layers/skip.jl")
 include("layers/linear.jl")
 include("layers/linear_bbb.jl")
 include("layers/relu.jl")
+include("layers/leaky_relu.jl")
 include("layers/softmax.jl")
 
 include("distributions/poisson.jl")
