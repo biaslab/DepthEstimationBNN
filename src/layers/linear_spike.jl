@@ -28,14 +28,6 @@ function (l::LinearSpike{T})(x) where { T }
     zW = sigmoid.(l.zW)
     zb = sigmoid.(l.zb)
 
-    # W_mask = map(z -> z[1] > z[2] ? 1f0 : 0f0, zip(zW, rand(T, size(zW))))
-    # b_mask = rand(T, size(zb)) .> zb
-    # W_mask = map(z -> argmax((z, rand(T))) - 1, zW)
-    # W_mask = argmax.(zip(zW, r)) .- 1
-    # uses gumbel trick to get gradients
-    # W_mask = first.(sample_one_hot.(zW))
-    # b_mask = first.(sample_one_hot.(zb))
-
     W_mask = to_mask(zW)[:,:,1]
     b_mask = to_mask(zb)[:,1]
 
