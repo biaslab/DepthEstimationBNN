@@ -44,13 +44,16 @@ function normalization_constant(p::Union{TruncatedPoisson, SafeTruncatedPoisson}
     end
     return sum
 end
+lognormalization_constant(p::Union{TruncatedPoisson, SafeTruncatedPoisson}) = log(normalization_constant(p))
 
-function pdf(p::Union{TruncatedPoisson, SafeTruncatedPoisson}, x::Int) 
+pdf(p::Union{TruncatedPoisson, SafeTruncatedPoisson}, x::Int) = exp(logpdf(p, x))
+
+function logpdf(p::Union{TruncatedPoisson, SafeTruncatedPoisson}, x::Int) 
     if x in support(p)
-        return pdf(Poisson(get_λ(p)), x) / normalization_constant(p)
+        return logpdf(Poisson(get_λ(p)), x) - lognormalization_constant(p)
     else
-        return 0
+        return -Inf
     end
 end
 
-KL_loss(p::Union{TruncatedPoisson, SafeTruncatedPoisson}, ::Poisson) = - log(normalization_constant(p))
+KL_loss(p::Union{TruncatedPoisson, SafeTruncatedPoisson}, q::Poisson) = sum(x -> pdf(p, x) * (logpdf(p, x) - logpdf(q, x)), support(p))
