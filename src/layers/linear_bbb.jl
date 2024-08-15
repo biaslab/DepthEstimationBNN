@@ -19,12 +19,12 @@ function LinearBBB(p::Pair; initializer = (0,1), T = Float32, eps = 1f0)
     )
 end
 
-function (l::LinearBBB)(x)
+function (l::LinearBBB{T})(x) where { T }
     W_std = softplus.(l.W_wstd)
     b_std = softplus.(l.b_wstd)
 
-    W = l.W_mean + W_std .* randn(size(l.W_mean))
-    b = l.b_mean + b_std .* randn(size(l.b_mean))
+    W = l.W_mean + W_std .* randn(T, size(l.W_mean))
+    b = l.b_mean + b_std .* randn(T, size(l.b_mean))
     y = W * x .+ b
     return y
 end
