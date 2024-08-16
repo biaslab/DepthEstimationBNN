@@ -1,9 +1,11 @@
 abstract type Distribution end
 
+include("distributions/discrete.jl")
 include("distributions/normal.jl")
+include("distributions/poisson.jl")
 include("distributions/transform.jl")
 include("distributions/truncate.jl")
-include("distributions/discrete.jl")
+include("distributions/truncated_poisson.jl")
 
 function Base.:*(d::Distribution, h::ShiftedHeaviside)
     lower, upper = support(d)
