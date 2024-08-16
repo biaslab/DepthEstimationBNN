@@ -5,7 +5,6 @@ struct TruncatedDistribution{D <: Distribution, T1 <: Real, T2 <: Real} <: Distr
     dist::D
     lower::T1
     upper::T2
-    # TruncatedDistribution(dist::D, lower::Real, upper::Real) where { D } = new{ D, lower, upper }(dist, lower, upper)
 end
 @functor TruncatedDistribution (dist, )
 
@@ -17,7 +16,7 @@ support(d::TruncatedDistribution) = get_lower(d), get_upper(d)
 normalization_constant(d::TruncatedDistribution) = cdf(get_dist(d), get_upper(d)) - cdf(get_dist(d), get_lower(d))
 
 function pdf(d::TruncatedDistribution, x::T) where { T <: Real }
-    if x <= get_lower(d) || x >= get_upper(d)
+    if x < get_lower(d) || x > get_upper(d)
         return zero(T)
     end
     return pdf(get_dist(d), x) / normalization_constant(d)
@@ -35,7 +34,7 @@ function invcdf(d::TruncatedDistribution, p)
 end
 
 truncate(d::Distribution, lower::Real, upper::Real) = TruncatedDistribution(d, lower, upper)
-truncate(d::TruncatedDistribution, lower::Real, upper::Real) = TruncatedDistribution(get_dist(d), lower, upper)
+truncate(d::TruncatedDistribution, lower::Real, upper::Real) = TruncatedDistribution(get_dist(d), max(get_lower(d), lower), min(get_upper(d), upper))
 
 function truncate_to_quantiles(d::Distribution, lower_quantile::Real, upper_quantile::Real)
     lower = invcdf(d, lower_quantile)
@@ -44,5 +43,5 @@ function truncate_to_quantiles(d::Distribution, lower_quantile::Real, upper_quan
 end
 
 function expand_truncation_to_ints(d::TruncatedDistribution)
-    return truncate(d, floor(Int, get_lower(d)), ceil(Int, get_upper(d)))
+    return TruncatedDistribution(get_dist(d), floor(Int, get_lower(d)), ceil(Int, get_upper(d)))
 end
