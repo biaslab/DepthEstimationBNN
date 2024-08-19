@@ -17,6 +17,6 @@ function relu(m, v)
     # rectified normal distribution
     #https://math.stackexchange.com/questions/1963292/expectation-and-variance-of-gaussian-going-through-rectified-linear-or-sigmoid-f
     m_new = Z .* m + s .* normpdf.(alpha)
-    v_new = (s.^2 + m.^2) .* Z + m .* s .* normpdf.(alpha) - m_new.^2
+    v_new = max.(0, (s.^2 + m.^2) .* Z + m .* s .* normpdf.(alpha) - m_new.^2)
     return m_new, v_new
 end
