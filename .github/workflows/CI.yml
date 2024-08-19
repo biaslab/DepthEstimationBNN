@@ -45,10 +45,22 @@ jobs:
       - name: Setup LCOV
         uses: hrishikesh-kadam/setup-lcov@v1
       - name: Report code coverage
-        uses: zgosalvez/github-actions-report-lcov@v3
+        id: coverage
+        uses: zgosalvez/github-actions-report-lcov@v4
         with:
           coverage-files: lcov.info
           artifact-name: code-coverage-report
           github-token: ${{ secrets.GITHUB_TOKEN }}
           update-comment: true
-          
+      - name: Create coverage badge
+        uses: schneegans/dynamic-badges-action@v1.7.0
+        with:
+          auth: ${{ secrets.GIST_SECRET }}
+          gistID: d12677a8265d5cff93a9737ecd36c305
+          filename: UnboundedBNN__${{ env.BRANCH }}.json
+          label: Coverage
+          message: ${{ steps.coverage.outputs.total-coverage-percentage }}
+          valColorRange: ${{ steps.coverage.outputs.total-coverage-percentage }}
+          minColorRange: 40
+          maxColorRange: 90
+        
