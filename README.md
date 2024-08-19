@@ -1,3 +1,2 @@
 [![Build Status](https://github.com/biaslab/UnboundedBNN/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/biaslab/UnboundedBNN/actions/workflows/CI.yml?query=branch%3Amain)
-[![Coverage](https://img.shields.io/endpoint?url=https%3A%2F%2Fgist.githubusercontent.com%2Fbartvanerp%2Fd12677a8265d5cff93a9737ecd36c305%2Fraw%2Fc12146bc1515e2f0c6f95d1d87e89abb15005276%2FUnboundedBNN__main.json
-)](https://github.com/biaslab/UnboundedBNN/actions/workflows/CI.yml?query=branch%3Amain)
+[![Coverage](https://img.shields.io/endpoint?url=https%3A%2F%2Fgist.githubusercontent.com%2Fbartvanerp%2Fd12677a8265d5cff93a9737ecd36c305%2Fraw%2FUnboundedBNN__main.json)](https://github.com/biaslab/UnboundedBNN/actions/workflows/CI.yml?query=branch%3Amain)
