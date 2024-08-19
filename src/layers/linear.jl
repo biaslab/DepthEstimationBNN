@@ -1,5 +1,7 @@
 export Linear
 
+using Random: default_rng
+
 struct Linear{T}
     W_mean :: Matrix{T}
     W_wvar :: Matrix{T}
@@ -8,12 +10,12 @@ struct Linear{T}
 end
 @functor Linear
 
-function Linear(p::Pair; initializer = (0,1), T = Float32, eps = 1f0)
+function Linear(p::Pair; initializer=(0,1), T=Float32, eps=1f0, rng=default_rng())
     return Linear(
-        initializer[1] .+ eps*randn(T, p[2], p[1]), 
-        convert(T, log(exp(initializer[2])-1)) .+ eps*randn(T, p[2], p[1]),
-        initializer[1] .+ eps*randn(T, p[2]),
-        convert(T, log(exp(initializer[2])-1)) .+ eps*randn(T, p[2])
+        initializer[1] .+ eps*randn(rng, T, p[2], p[1]), 
+        convert(T, log(exp(initializer[2])-1)) .+ eps*randn(rng, T, p[2], p[1]),
+        initializer[1] .+ eps*randn(rng, T, p[2]),
+        convert(T, log(exp(initializer[2])-1)) .+ eps*randn(rng, T, p[2])
     )
 end
 

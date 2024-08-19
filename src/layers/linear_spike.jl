@@ -1,6 +1,7 @@
 export LinearSpike
 
 using Zygote
+using Random: default_rng
 
 struct LinearSpike{T}
     W_mean :: Matrix{T}
@@ -12,18 +13,18 @@ struct LinearSpike{T}
 end
 @functor LinearSpike
 
-function LinearSpike(p::Pair; initializer = (0,1), T = Float32, eps = 1f0)
+function LinearSpike(p::Pair; initializer=(0,1), T=Float32, eps=1f0, rng=default_rng())
     return LinearSpike(
-        initializer[1] .+ eps*randn(T, p[2], p[1]), 
-        convert(T, log(exp(initializer[2])-1)) .+ eps*randn(T, p[2], p[1]),
-        initializer[1] .+ eps*randn(T, p[2]),
-        convert(T, log(exp(initializer[2])-1)) .+ eps*randn(T, p[2]),
+        initializer[1] .+ eps*randn(rng, T, p[2], p[1]), 
+        convert(T, log(exp(initializer[2])-1)) .+ eps*randn(rng, T, p[2], p[1]),
+        initializer[1] .+ eps*randn(rng, T, p[2]),
+        convert(T, log(exp(initializer[2])-1)) .+ eps*randn(rng, T, p[2]),
         zeros(T, p[2], p[1]), 
         zeros(T, p[2])
     )
 end
 
-function (l::LinearSpike{T})(x) where { T }
+function (l::LinearSpike{T})(x; rng=default_rng()) where { T }
 
     zW = sigmoid.(l.zW)
     zb = sigmoid.(l.zb)
@@ -33,8 +34,8 @@ function (l::LinearSpike{T})(x) where { T }
 
     W_std = softplus.(l.W_wstd)
     b_std = softplus.(l.b_wstd)
-    W = (l.W_mean + W_std .* randn(T, size(l.W_mean))) .* W_mask
-    b = (l.b_mean + b_std .* randn(T, size(l.b_mean))) .* b_mask
+    W = (l.W_mean + W_std .* randn(rng, T, size(l.W_mean))) .* W_mask
+    b = (l.b_mean + b_std .* randn(rng, T, size(l.b_mean))) .* b_mask
 
     return W * x .+ b
 end
@@ -53,11 +54,11 @@ function KL_loss(l::LinearSpike)
     return kl_w + kl_b + kl_zW + kl_zb
 end
 
-function sample_gumbel(; epsilon=1e-10, T=Float32)
+function sample_gumbel(; epsilon=1e-10, T=Float32, rng=default_rng())
     # ret = rand(Float32, size...)
     # ret = -log.(-log.(ret .+ epsilon) .+ epsilon)
-    ret1 = -log(-log(rand(T) + epsilon) + epsilon)
-    ret2 = -log(-log(rand(T) + epsilon) + epsilon)
+    ret1 = -log(-log(rand(rng, T) + epsilon) + epsilon)
+    ret2 = -log(-log(rand(rng, T) + epsilon) + epsilon)
     return ret1, ret2
 end
 
@@ -71,9 +72,9 @@ function sample_one_hot(p; epsilon=1e-10, tau=0.1)
     return ret
 end
 
-function to_mask(p; epsilon=1e-10, tau=0.1)
-    g1 = -log.(-log.(rand(Float32, size(p)) .+ epsilon) .+ epsilon) 
-    g2 = -log.(-log.(rand(Float32, size(p)) .+ epsilon) .+ epsilon)
+function to_mask(p; epsilon=1e-10, tau=0.1, rng=default_rng())
+    g1 = -log.(-log.(rand(rng, Float32, size(p)) .+ epsilon) .+ epsilon) 
+    g2 = -log.(-log.(rand(rng, Float32, size(p)) .+ epsilon) .+ epsilon)
 
     y1 = (g1 .+ log.(p .+ epsilon)) ./ tau
     y2 = (g2 .+ log.(1 .- p .+ epsilon)) ./ tau
