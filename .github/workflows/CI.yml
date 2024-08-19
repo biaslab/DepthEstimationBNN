@@ -57,10 +57,10 @@ jobs:
         with:
           auth: ${{ secrets.GIST_SECRET }}
           gistID: d12677a8265d5cff93a9737ecd36c305
-          filename: UnboundedBNN__${{ env.BRANCH }}.json
+          filename: UnboundedBNN__${{ github.ref_name }}.json
           label: Coverage
-          message: ${{ steps.coverage.outputs.total-coverage-percentage }}
-          valColorRange: ${{ steps.coverage.outputs.total-coverage-percentage }}
+          message: ${{ steps.coverage.outputs.total-coverage }}
+          valColorRange: ${{ steps.coverage.outputs.total-coverage }}
           minColorRange: 40
           maxColorRange: 90
         
