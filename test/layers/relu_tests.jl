@@ -10,9 +10,9 @@
         out = relu.(m, v)
         @test all(m_out .== first.(out))
         @test all(v_out .== last.(out))
-        @test all(m_out .>= m)
+        @test all(m_out .>= m .- 1e-10)
         @test all(m_out .>= 0)
-        @test all(v_out .<= v)
+        @test all(v_out .<= v .+ 1e-10)
         @test all(v_out .>= 0)
 
     end

@@ -13,7 +13,7 @@ function relu(m, v)
     s = sqrt.(v)
     is = 1 ./ s
     alpha = - m .* is
-    Z = 1 .- normcdf.(alpha)
+    Z = normccdf.(alpha)
     # rectified normal distribution
     #https://math.stackexchange.com/questions/1963292/expectation-and-variance-of-gaussian-going-through-rectified-linear-or-sigmoid-f
     m_new = Z .* m + s .* normpdf.(alpha)
