@@ -19,6 +19,8 @@ include("layers/softmax.jl")
 
 include("distributions.jl")
 
+include("data/spiral.jl")
+
 struct Unbounded{T1, T2, T3, P, TP}
     input_layer::T1
     hidden_layers::T2
