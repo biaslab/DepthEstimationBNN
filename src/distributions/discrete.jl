@@ -25,6 +25,9 @@ end
 discretize(d::Distribution) = DiscreteDistribution(d)
 
 function KL_loss(p::DiscreteDistribution, q::DiscreteDistribution) 
+    if get_dist(p) == get_dist(q)
+        return 0.0
+    end
     lower, upper = support(p)
     return sum(x -> pmf(p, x) * (log(pmf(p, x) / pmf(q, x))), lower:upper)
 end
