@@ -5,6 +5,7 @@ struct Skip{ L }
 end
 @functor Skip
 
+(l::Skip)(x) = x + l.layer(x)
 function (l::Skip)(x_mean, x_var)
     y_mean, y_var = l.layer(x_mean, x_var)
     return y_mean + x_mean, y_var + x_var
