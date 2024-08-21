@@ -1,6 +1,8 @@
 export TruncatedDistribution
 export truncate, truncate_to_quantiles, expand_truncation_to_ints
 
+import Base: fieldtype
+
 struct TruncatedDistribution{D <: Distribution, T1 <: Real, T2 <: Real} <: Distribution
     dist::D
     lower::T1
@@ -13,19 +15,24 @@ get_lower(d::TruncatedDistribution) = d.lower
 get_upper(d::TruncatedDistribution) = d.upper
 support(d::TruncatedDistribution) = get_lower(d), get_upper(d)
 
+realtype(::Type{TruncatedDistribution{D, T1, T2}}) where {D, T1, T2} = promote_type(realtype(D), T1, T2)
+realtype(::TruncatedDistribution{D, T1, T2}) where {D, T1, T2} = promote_type(realtype(D), T1, T2)
+
 normalization_constant(d::TruncatedDistribution) = cdf(get_dist(d), get_upper(d)) - cdf(get_dist(d), get_lower(d))
 
 function pdf(d::TruncatedDistribution, x::T) where { T <: Real }
+    Tx = promote_type(T, realtype(d))
     if x < get_lower(d) || x > get_upper(d)
-        return zero(T)
+        return zero(Tx)
     end
     return pdf(get_dist(d), x) / normalization_constant(d)
 end
-function cdf(d::TruncatedDistribution, x::T) where { T <: Real }
+function cdf(d::TruncatedDistribution{D}, x::T) where { T, D }
+    Tx = promote_type(T, realtype(d))
     if x <= get_lower(d)
-        return zero(T)
+        return zero(Tx)
     elseif x >= get_upper(d)
-        return one(T)
+        return one(Tx)
     end
     return (cdf(get_dist(d), x) - cdf(get_dist(d), get_lower(d))) / normalization_constant(d)
 end
