@@ -36,8 +36,7 @@ function (l::LinearSpike{T})(x; rng=default_rng()) where { T }
     b_std = softplus.(l.b_wstd)
     W = (l.W_mean + W_std .* randn(rng, T, size(l.W_mean))) .* W_mask
     b = (l.b_mean + b_std .* randn(rng, T, size(l.b_mean))) .* b_mask
-
-    return W * x .+ b
+    return muladd(W, x, b)
 end
 
 function KL_loss(l::LinearSpike)
