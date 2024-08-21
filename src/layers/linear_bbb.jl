@@ -23,9 +23,9 @@ function (l::LinearBBB{T})(x; rng=default_rng()) where { T }
     W_std = softplus.(l.W_wstd)
     b_std = softplus.(l.b_wstd)
 
-    W = l.W_mean + W_std .* randn(rng, T, size(l.W_mean))
-    b = l.b_mean + b_std .* randn(rng, T, size(l.b_mean))
-    y = W * x .+ b
+    W = muladd.(W_std, randn(rng, T, size(l.W_mean)), l.W_mean) # W = l.W_mean + W_std .* randn(rng, T, size(l.W_mean))
+    b = muladd.(b_std, randn(rng, T, size(l.b_mean)), l.b_mean) # b = l.b_mean + b_std .* randn(rng, T, size(l.b_mean))
+    y = muladd(W, x, b)
     return y
 end
 
