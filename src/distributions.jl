@@ -15,6 +15,9 @@ Base.:*(h::ShiftedHeaviside, d::Distribution) = d * h
 
 struct SupportDistribution{D <: Distribution, L, U } <: Distribution
     dist::D
-    SupportDistribution(d::D) where { D <: Distribution } = new{D, support(d)...}(d)
+    function SupportDistribution(d::D) where { D <: Distribution } 
+        s = support(d)
+        return new{D, first(s), last(s)}(d)
+    end
 end
 @functor SupportDistribution
