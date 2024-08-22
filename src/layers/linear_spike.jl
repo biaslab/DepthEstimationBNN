@@ -48,12 +48,12 @@ function KL_loss(l::LinearSpike)
 
     kl_w = sum(zW .* KL_normals.(l.W_mean, W_var))
     kl_b = sum(zb .* KL_normals.(l.b_mean, b_var)) 
-    kl_zW = sum(zW .* log.(zW) + (1 .- zW) .* log.(1 .- zW))
-    kl_zb = sum(zb .* log.(zb) + (1 .- zb) .* log.(1 .- zb))
+    kl_zW = sum(zW .* log.(zW) + (1 .- zW) .* log.(1 .- zW) .+ log(2))
+    kl_zb = sum(zb .* log.(zb) + (1 .- zb) .* log.(1 .- zb) .+ log(2))
     return kl_w + kl_b + kl_zW + kl_zb
 end
 
-function sample_gumbel(; epsilon=1e-10, T=Float32, rng=default_rng())
+function sample_gumbel(; epsilon=0.00000000001f0, T=Float32, rng=default_rng())
     # ret = rand(Float32, size...)
     # ret = -log.(-log.(ret .+ epsilon) .+ epsilon)
     ret1 = -log(-log(rand(rng, T) + epsilon) + epsilon)
@@ -61,7 +61,7 @@ function sample_gumbel(; epsilon=1e-10, T=Float32, rng=default_rng())
     return ret1, ret2
 end
 
-function sample_one_hot(p; epsilon=1e-10, tau=0.1)
+function sample_one_hot(p; epsilon=0.00000000001f0, tau=0.1f0)
     # logits = log.([p, 1-p] .+ epsilon)
     # y = logits + sample_gumbel(2, epsilon = epsilon)
     y = (log(p + epsilon), log(1 - p + epsilon)) .+ sample_gumbel(epsilon = epsilon)
@@ -71,9 +71,9 @@ function sample_one_hot(p; epsilon=1e-10, tau=0.1)
     return ret
 end
 
-function to_mask(p; epsilon=1e-10, tau=0.1, rng=default_rng())
-    g1 = -log.(-log.(rand(rng, Float32, size(p)) .+ epsilon) .+ epsilon) 
-    g2 = -log.(-log.(rand(rng, Float32, size(p)) .+ epsilon) .+ epsilon)
+function to_mask(p; T=Float32, epsilon=0.00000000001f0, tau=0.1f0, rng=default_rng())
+    g1 = -log.(-log.(rand(rng, T, size(p)) .+ epsilon) .+ epsilon) 
+    g2 = -log.(-log.(rand(rng, T, size(p)) .+ epsilon) .+ epsilon)
 
     y1 = (g1 .+ log.(p .+ epsilon)) ./ tau
     y2 = (g2 .+ log.(1 .- p .+ epsilon)) ./ tau
