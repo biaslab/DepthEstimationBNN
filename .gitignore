@@ -2,4 +2,4 @@ Manifest.toml
 
 profile.pb.gz
 
-data
+experiments/data
