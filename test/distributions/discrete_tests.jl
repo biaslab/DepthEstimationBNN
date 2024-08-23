@@ -1,6 +1,6 @@
 @testitem "DiscreteDistribution" begin
 
-    using UnboundedBNN: DiscreteDistribution, get_dist, support, pmf, H, truncate, Normal, cdf
+    using UnboundedBNN: DiscreteDistribution, get_dist, support, pmf, H, truncate, Normal, cdf, mean, var, std, realtype
 
     d = DiscreteDistribution(Normal(1.0, 2.0))
     @test get_dist(d) == Normal(1.0, 2.0)
@@ -8,6 +8,10 @@
     for k in -10:10
         @test pmf(d, k) >= 0
     end
+    @test realtype(DiscreteDistribution(Normal(1.0, 2.0))) == Float64
+    @test realtype(typeof(DiscreteDistribution(Normal(1.0, 2.0)))) == Float64
+    @test realtype(DiscreteDistribution(Normal(1.0f0, 2.0f0))) == Float32
+    @test realtype(typeof(DiscreteDistribution(Normal(1.0f0, 2.0f0)))) == Float32
     
     @testset "pmf" begin
         d1 = DiscreteDistribution(Normal(1.0, 2.0))
@@ -21,9 +25,38 @@
 
         d3 = DiscreteDistribution(truncate(Normal(0.0, 1.0), 0.0, 5.0))
         @test pmf(d3, -1) ≈ 0.0
-        @test pmf(d3, 0) >= 0.0
-        @test pmf(d3, 5) >= 0.0
+        @test pmf(d3, 0) > 0.0
+        @test pmf(d3, 4) > 0.0
+        @test pmf(d3, 5) ≈ 0.0
         @test pmf(d3, 6) ≈ 0.0
+
+        d4 = DiscreteDistribution(truncate(Normal(0.0, 1.0), 0.0, 1.0))
+        @test pmf(d4, -1) ≈ 0.0
+        @test pmf(d4, 0) ≈ 1.0
+        @test pmf(d4, 1) ≈ 0.0
+
+        d5 = DiscreteDistribution(truncate(Normal(0.0, 1.0), 0.0, 0.1))
+        @test pmf(d5, -1) ≈ 0.0
+        @test pmf(d5, 0) ≈ 1.0
+        @test pmf(d5, 1) ≈ 0.0
+
+        d6 = DiscreteDistribution(truncate(Normal(0.0, 1.0), 0.0, 1.5))
+        @test pmf(d6, -1) ≈ 0.0
+        @test pmf(d6, 0) > 0.0
+        @test pmf(d6, 1) > 0.0
+        @test pmf(d6, 2) ≈ 0.0
+    end
+
+    @testset "statistics" begin
+        dist = discretize(truncate(Normal(0, 2), 0, 1))
+        @test mean(dist) ≈ 0.0
+        @test var(dist) ≈ 0.0
+        @test std(dist) ≈ 0.0
+
+        dist = discretize(truncate(Normal(0, 2), 0, 2))
+        @test mean(dist) ≈ pmf(dist, 1)
+        @test var(dist) ≈ pmf(dist,1)  * ( (1-pmf(dist,1))^2 + pmf(dist,0) * pmf(dist,1))
+        @test std(dist) ≈ sqrt(var(dist))
     end
 
     @testset "KL_loss" begin
