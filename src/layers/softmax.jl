@@ -13,4 +13,3 @@ end
 
 (l::Softmax)(x::Vector) = x .- logsumexp(x)
 (l::Softmax)(x::Matrix) = x .- logsumexp(x, dims = 1)
-
