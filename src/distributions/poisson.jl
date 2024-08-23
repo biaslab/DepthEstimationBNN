@@ -23,6 +23,7 @@ realtype(::SafePoisson{T}) where {T} = T
 
 mean(p::UnionPoisson) = get_λ(p)
 var(p::UnionPoisson) = get_λ(p)
+std(p::UnionPoisson) = sqrt(get_λ(p))
 
 function logpmf(p::UnionPoisson, x::Int) 
     if x < 0
