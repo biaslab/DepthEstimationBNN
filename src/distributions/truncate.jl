@@ -58,3 +58,9 @@ end
 function expand_truncation_to_ints(d::TruncatedDistribution)
     return TruncatedDistribution(get_dist(d), floor(Int, get_lower(d)), ceil(Int, get_upper(d)))
 end
+
+function Base.:*(d::Distribution, h::ShiftedHeaviside)
+    lower, upper = support(d)
+    return truncate(d, max(h.a, lower), min(Inf, upper))
+end
+Base.:*(h::ShiftedHeaviside, d::Distribution) = d * h
