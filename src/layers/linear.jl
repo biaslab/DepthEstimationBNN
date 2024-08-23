@@ -28,9 +28,6 @@ function (l::Linear)(x_mean, x_var)
     return y_mean, y_var
 end
 
-KL_normals(m, v) = KL_normals(m, v, 0, 1)
-KL_normals(pm, pv, qm, qv) = (log(qv/pv) + (pv + abs2(pm - qm) )/qv - 1)/2
-
 function KL_loss(l::Linear)
     # ASSUMES STANDARD NORMAL PRIOR
     W_var = softplus.(l.W_wvar)

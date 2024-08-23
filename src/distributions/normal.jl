@@ -31,3 +31,7 @@ pdf(d::UnionNormal, x::Real) = normpdf(get_μ(d), get_σ(d), x)
 logpdf(d::UnionNormal, x::Real) = normlogpdf(get_μ(d), get_σ(d), x)
 cdf(d::UnionNormal, x::Real) = normcdf(get_μ(d), get_σ(d), x)
 invcdf(d::UnionNormal, p::Real) = norminvcdf(get_μ(d), get_σ(d), p)
+
+KL_loss(d1::UnionNormal, d2::UnionNormal) = KL_normals(get_μ(d1), get_σ(d1)^2, get_μ(d2), get_σ(d2)^2)
+KL_normals(m, v) = KL_normals(m, v, 0, 1)
+KL_normals(pm, pv, qm, qv) = (log(qv/pv) + (pv + abs2(pm - qm) )/qv - 1)/2
