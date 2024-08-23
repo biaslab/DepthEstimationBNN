@@ -2,64 +2,37 @@
 
     using UnboundedBNN: Normal, SafeNormal, get_μ, get_σ, support, pdf, logpdf, cdf, invcdf, invsoftplus
     
-    @testset "Standard Normal" begin
-        d = Normal(0.0, 1.0)
-        @test get_μ(d) == 0.0
-        @test get_σ(d) == 1.0
-        @test support(d) == (-Inf, Inf)
-        @test pdf(d, 0.0) > 0
-        @test logpdf(d, 0.0) ≈ log(pdf(d, 0.0))
-        @test cdf(d, -Inf) ≈ 0.0
-        @test cdf(d, 0.0) ≈ 0.5
-        @test cdf(d, Inf) ≈ 1.0
-        @test invcdf(d, 0.0) ≈ -Inf
-        @test invcdf(d, 0.5) ≈ 0.0
-        @test invcdf(d, 1.0) ≈ Inf
-    end
+    safe_normal_constructor(μ, σ) = SafeNormal([μ], [invsoftplus(σ)])
 
-    @testset "Normal" begin
-        d = Normal(1.0, 2.0)
-        @test get_μ(d) == 1.0
-        @test get_σ(d) == 2.0
-        @test support(d) == (-Inf, Inf)
-        @test pdf(d, 1.0) > 0
-        @test logpdf(d, 1.0) ≈ log(pdf(d, 1.0))
-        @test cdf(d, -Inf) ≈ 0.0
-        @test cdf(d, 1.0) ≈ 0.5
-        @test cdf(d, Inf) ≈ 1.0
-        @test invcdf(d, 0.0) ≈ -Inf
-        @test invcdf(d, 0.5) ≈ 1.0
-        @test invcdf(d, 1.0) ≈ Inf
-    end
-    
-    @testset "Standard SafeNormal" begin
-        d = SafeNormal([0.0], [invsoftplus(1.0)])
-        @test get_μ(d) == 0.0
-        @test get_σ(d) == 1.0
-        @test support(d) == (-Inf, Inf)
-        @test pdf(d, 0.0) > 0
-        @test logpdf(d, 0.0) ≈ log(pdf(d, 0.0))
-        @test cdf(d, -Inf) ≈ 0.0
-        @test cdf(d, 0.0) ≈ 0.5
-        @test cdf(d, Inf) ≈ 1.0
-        @test invcdf(d, 0.0) ≈ -Inf
-        @test invcdf(d, 0.5) ≈ 0.0
-        @test invcdf(d, 1.0) ≈ Inf
-    end
-    
-    @testset "SafeNormal" begin
-        d = SafeNormal([1.0], [invsoftplus(2.0)])
-        @test get_μ(d) == 1.0
-        @test get_σ(d) == 2.0
-        @test support(d) == (-Inf, Inf)
-        @test pdf(d, 1.0) > 0
-        @test logpdf(d, 1.0) ≈ log(pdf(d, 1.0))
-        @test cdf(d, -Inf) ≈ 0.0
-        @test cdf(d, 1.0) ≈ 0.5
-        @test cdf(d, Inf) ≈ 1.0
-        @test invcdf(d, 0.0) ≈ -Inf
-        @test invcdf(d, 0.5) ≈ 1.0
-        @test invcdf(d, 1.0) ≈ Inf
+    for normal_constructor in (Normal, safe_normal_constructor)
+        
+        d1 = normal_constructor(0.0, 1.0)
+        d1 = Normal(0.0, 1.0)
+        @test get_μ(d1) == 0.0
+        @test get_σ(d1) == 1.0
+        @test support(d1) == (-Inf, Inf)
+        @test pdf(d1, 0.0) > 0
+        @test logpdf(d1, 0.0) ≈ log(pdf(d1, 0.0))
+        @test cdf(d1, -Inf) ≈ 0.0
+        @test cdf(d1, 0.0) ≈ 0.5
+        @test cdf(d1, Inf) ≈ 1.0
+        @test invcdf(d1, 0.0) ≈ -Inf
+        @test invcdf(d1, 0.5) ≈ 0.0
+        @test invcdf(d1, 1.0) ≈ Inf
+
+        d2 = normal_constructor(1.0, 2.0)
+        @test get_μ(d2) == 1.0
+        @test get_σ(d2) == 2.0
+        @test support(d2) == (-Inf, Inf)
+        @test pdf(d2, 1.0) > 0
+        @test logpdf(d2, 1.0) ≈ log(pdf(d2, 1.0))
+        @test cdf(d2, -Inf) ≈ 0.0
+        @test cdf(d2, 1.0) ≈ 0.5
+        @test cdf(d2, Inf) ≈ 1.0
+        @test invcdf(d2, 0.0) ≈ -Inf
+        @test invcdf(d2, 0.5) ≈ 1.0
+        @test invcdf(d2, 1.0) ≈ Inf
+
     end
 
 end
