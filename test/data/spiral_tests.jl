@@ -4,5 +4,6 @@
     @test size(x) == (2, 1000)
     @test size(y) == (1000,)
     @test eltype(x) == Float32
+    @test eltype(y) == Int64
 
 end
