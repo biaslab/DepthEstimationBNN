@@ -13,6 +13,13 @@
     @test realtype(DiscreteDistribution(Normal(1.0f0, 2.0f0))) == Float32
     @test realtype(typeof(DiscreteDistribution(Normal(1.0f0, 2.0f0)))) == Float32
     
+    @testset "support" begin
+        @test support(DiscreteDistribution(truncate(Normal(0.0, 1.0), 0.0, 5.0))) == (0, 4)
+        @test support(DiscreteDistribution(truncate(Normal(0.0, 1.0), 0.0, 1.0))) == (0, 0)
+        @test support(DiscreteDistribution(truncate(Normal(0.0, 1.0), 0.0, 1.1))) == (0, 1)
+        @test support(DiscreteDistribution(truncate(Normal(0.0, 1.0), -0.1, 1.5))) == (-1, 1)
+    end
+
     @testset "pmf" begin
         d1 = DiscreteDistribution(Normal(1.0, 2.0))
         @test pmf(d1, 0) ≈ (cdf(Normal(1.0, 2.0), 1) - cdf(Normal(1.0, 2.0), 0))
