@@ -13,7 +13,7 @@ struct LinearSpike{T}
 end
 @functor LinearSpike
 
-function LinearSpike(p::Pair; initializer=(0,1), T=Float32, eps=1f0, rng=default_rng())
+function LinearSpike(p::Pair; initializer=(0,1), T=Float32, eps=convert(Float32, sqrt(2 / (p[1] + p[2]))), rng=default_rng())
     return LinearSpike(
         initializer[1] .+ eps*randn(rng, T, p[2], p[1]), 
         convert(T, log(exp(initializer[2])-1)) .+ eps*randn(rng, T, p[2], p[1]),
