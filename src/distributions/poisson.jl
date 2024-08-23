@@ -26,11 +26,12 @@ var(p::UnionPoisson) = get_λ(p)
 std(p::UnionPoisson) = sqrt(get_λ(p))
 
 function logpmf(p::UnionPoisson, x::Int) 
+    T = promote_type(realtype(p), Float32)
     if x < 0
         return -Inf
     else
         λ = get_λ(p)
-        return convert(realtype(p), -λ + x * log(λ) - logfactorial(x))
+        return convert(T, -λ + x * log(λ) - logfactorial(x))
     end
 end
 function pmf(p::UnionPoisson, x::Int)
