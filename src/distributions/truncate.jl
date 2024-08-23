@@ -18,7 +18,7 @@ support(d::TruncatedDistribution) = get_lower(d), get_upper(d)
 realtype(::Type{TruncatedDistribution{D, T1, T2}}) where {D, T1, T2} = promote_type(realtype(D), T1, T2)
 realtype(::TruncatedDistribution{D, T1, T2}) where {D, T1, T2} = promote_type(realtype(D), T1, T2)
 
-normalization_constant(d::TruncatedDistribution) = cdf(get_dist(d), get_upper(d)) - cdf(get_dist(d), get_lower(d))
+normalization_constant(d::TruncatedDistribution) = cdf(get_dist(d), get_upper(d)) - cdf(get_dist(d), get_lower(d)) + pmf(get_dist(d), get_lower(d))
 
 function pdf(d::TruncatedDistribution, x::T) where { T <: Real }
     Tx = promote_type(T, realtype(d))
@@ -31,13 +31,19 @@ function cdf(d::TruncatedDistribution{D}, x::T) where { T, D }
     Tx = promote_type(T, realtype(d))
     if x <= get_lower(d)
         return zero(Tx)
-    elseif x >= get_upper(d)
+    elseif x > get_upper(d)
         return one(Tx)
     end
     return (cdf(get_dist(d), x) - cdf(get_dist(d), get_lower(d))) / normalization_constant(d)
 end
 function invcdf(d::TruncatedDistribution, p)
     return invcdf(get_dist(d), cdf(get_dist(d), get_lower(d)) + p * normalization_constant(d))
+end
+function pmf(d::TruncatedDistribution, x::Int)
+    if x < get_lower(d) || x > get_upper(d)
+        return zero(realtype(d))
+    end
+    return pmf(get_dist(d), x) / normalization_constant(d)
 end
 
 truncate(d::Distribution, lower::Real, upper::Real) = TruncatedDistribution(d, lower, upper)

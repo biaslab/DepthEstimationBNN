@@ -1,6 +1,8 @@
 export DiscreteDistribution
 export discretize, pmf
 
+import Statistics: mean, std, var
+
 struct DiscreteDistribution{D <: Distribution} <: Distribution
     dist::D
 end
@@ -27,6 +29,13 @@ realtype(::Type{DiscreteDistribution{D}}) where {D} = realtype(D)
 realtype(::DiscreteDistribution{D}) where {D} = realtype(D)
 
 discretize(d::Distribution) = DiscreteDistribution(d)
+
+mean(d::DiscreteDistribution) = sum(x -> x * pmf(d, x), support(d)[1]:support(d)[2])
+function var(d::DiscreteDistribution)
+    m = mean(d)
+    return sum(x -> (x - m)^2 * pmf(d, x), support(d)[1]:support(d)[2])
+end
+std(d::DiscreteDistribution) = sqrt(var(d))
 
 function KL_loss(p::DiscreteDistribution, q::DiscreteDistribution) 
     if get_dist(p) == get_dist(q)

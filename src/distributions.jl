@@ -1,11 +1,10 @@
 abstract type Distribution end
 
+include("distributions/truncate.jl")
 include("distributions/discrete.jl")
 include("distributions/normal.jl")
 include("distributions/poisson.jl")
 include("distributions/transform.jl")
-include("distributions/truncate.jl")
-include("distributions/truncated_poisson.jl")
 
 function Base.:*(d::Distribution, h::ShiftedHeaviside)
     lower, upper = support(d)
@@ -21,3 +20,6 @@ struct SupportDistribution{D <: Distribution, L, U } <: Distribution
     end
 end
 @functor SupportDistribution
+
+pmf(::Distribution, ::Real) = 0
+pdf(::Distribution, ::Real) = 0
