@@ -1,6 +1,6 @@
 @testitem "Truncated distributions" begin
 
-    using UnboundedBNN: TruncatedDistribution, pdf, cdf, Normal, normalization_constant, invcdf, get_dist, get_lower, get_upper, truncate, expand_truncation_to_ints
+    using UnboundedBNN: TruncatedDistribution, pdf, cdf, Normal, normalization_constant, invcdf, get_dist, get_lower, get_upper, truncate, expand_truncation_to_ints, realtype, support
 
     @testset "get" begin
         @test get_dist(TruncatedDistribution(Normal(0, 1), 0, Inf)) == Normal(0, 1)
@@ -14,10 +14,37 @@
         @test get_upper(TruncatedDistribution(Normal(2,3), 2, Inf)) == Inf
     end
 
+    @testset "support" begin
+        @test support(TruncatedDistribution(Normal(0, 1), 0, Inf)) == (0, Inf)
+        @test support(TruncatedDistribution(Normal(0, 1), -Inf, 0)) == (-Inf, 0)
+        @test support(TruncatedDistribution(Normal(2,3), 2, Inf)) == (2, Inf)
+        @test support(TruncatedDistribution(Normal(2,3), 2, 3)) == (2, 3)
+    end
+
+    @testset "realtype" begin
+        @test realtype(TruncatedDistribution(Normal(0, 1), 0, Inf)) == Float64
+        @test realtype(TruncatedDistribution(Normal(0, 1), -Inf, 0)) == Float64
+        @test realtype(TruncatedDistribution(Normal(2,3), 2, Inf)) == Float64
+        @test realtype(TruncatedDistribution(Normal(2,3), 2, 3)) == Int64
+        @test realtype(TruncatedDistribution(Normal(2,3), 2, 3.0)) == Float64
+        @test realtype(TruncatedDistribution(Normal(2f0,3f0), 2, 3.0)) == Float64
+        @test realtype(TruncatedDistribution(Normal(2f0,3f0), 2, 3)) == Float32
+
+        @test realtype(typeof(TruncatedDistribution(Normal(0, 1), 0, Inf))) == Float64
+        @test realtype(typeof(TruncatedDistribution(Normal(0, 1), -Inf, 0))) == Float64
+        @test realtype(typeof(TruncatedDistribution(Normal(2,3), 2, Inf))) == Float64
+        @test realtype(typeof(TruncatedDistribution(Normal(2,3), 2, 3))) == Int64
+        @test realtype(typeof(TruncatedDistribution(Normal(2,3), 2, 3.0))) == Float64
+        @test realtype(typeof(TruncatedDistribution(Normal(2f0,3f0), 2, 3.0))) == Float64
+        @test realtype(typeof(TruncatedDistribution(Normal(2f0,3f0), 2, 3))) == Float32
+    end
+
     @testset "normalization_constant" begin
         @test normalization_constant(TruncatedDistribution(Normal(0, 1), -Inf, Inf)) ≈ 1
         @test normalization_constant(TruncatedDistribution(Normal(0, 1), -Inf, 0)) ≈ 0.5
         @test normalization_constant(TruncatedDistribution(Normal(2,3), 2, Inf)) ≈ 0.5
+        @test normalization_constant(TruncatedDistribution(Poisson(1), 0, 3)) ≈ sum(pmf.(Ref(Poisson(1)), 0:3))
+        @test normalization_constant(TruncatedDistribution(Poisson(1), 1, 3)) ≈ sum(pmf.(Ref(Poisson(1)), 1:3))
     end
         
     @testset "pdf" begin
