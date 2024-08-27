@@ -10,7 +10,6 @@ include("losses/KL.jl")
 
 include("layers/chain.jl")
 include("layers/skip.jl")
-include("layers/linear.jl")
 include("layers/linear_bbb.jl")
 include("layers/linear_spike.jl")
 include("layers/relu.jl")
