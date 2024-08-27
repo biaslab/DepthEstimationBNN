@@ -13,5 +13,5 @@
         )
     )
     @test transform(d2) == DiscreteDistribution(TruncatedDistribution(Normal(0, 1), 0, 1))
-
+    @test transform(Normal(0, 1)) == Normal(0, 1)
 end
