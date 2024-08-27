@@ -19,6 +19,7 @@ realtype(::Type{TruncatedDistribution{D, T1, T2}}) where {D, T1, T2} = promote_t
 realtype(::TruncatedDistribution{D, T1, T2}) where {D, T1, T2} = promote_type(realtype(D), T1, T2)
 
 normalization_constant(d::TruncatedDistribution) = cdf(get_dist(d), get_upper(d)) - cdf(get_dist(d), get_lower(d)) + pmf(get_dist(d), get_lower(d))
+lognormalization_constant(d::TruncatedDistribution) = logaddexp(logsubexp(logcdf(get_dist(d), get_upper(d)), logcdf(get_dist(d), get_lower(d))), logpmf(get_dist(d), get_lower(d)))
 
 function pdf(d::TruncatedDistribution, x::T) where { T <: Real }
     Tx = promote_type(T, realtype(d))
@@ -35,6 +36,15 @@ function cdf(d::TruncatedDistribution{D}, x::T) where { T, D }
         return one(Tx)
     end
     return (cdf(get_dist(d), x) - cdf(get_dist(d), get_lower(d))) / normalization_constant(d)
+end
+function logcdf(d::TruncatedDistribution, x::T) where { T <: Real }
+    Tx = promote_type(T, realtype(d))
+    if x <= get_lower(d)
+        return -Inf
+    elseif x > get_upper(d)
+        return zero(Tx)
+    end
+    return logsubexp(logcdf(get_dist(d), x), logcdf(get_dist(d), get_lower(d))) - lognormalization_constant(d)
 end
 function invcdf(d::TruncatedDistribution, p)
     return invcdf(get_dist(d), cdf(get_dist(d), get_lower(d)) + p * normalization_constant(d))
