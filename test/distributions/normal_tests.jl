@@ -7,7 +7,6 @@
     for normal_constructor in (Normal, safe_normal_constructor)
         
         d1 = normal_constructor(0.0, 1.0)
-        d1 = Normal(0.0, 1.0)
         @test get_μ(d1) == 0.0
         @test get_σ(d1) == 1.0
         @test support(d1) == (-Inf, Inf)
