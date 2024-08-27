@@ -1,6 +1,6 @@
 name = "UnboundedBNN"
 uuid = "553d5cec-a5b1-43b3-b1a2-4c3211476547"
-authors = ["Bart van Erp <44952318+bartvanerp@users.noreply.github.com>"]
+authors = ["Bart van Erp"]
 version = "0.1.0"
 
 [deps]
