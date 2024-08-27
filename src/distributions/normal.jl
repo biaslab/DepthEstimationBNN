@@ -1,7 +1,5 @@
 export Normal, SafeNormal
 
-using StatsFuns: normpdf
-
 struct Normal{T} <: Distribution
     μ::T
     σ::T
@@ -29,7 +27,9 @@ support(::SafeNormal) = -Inf, Inf
 
 pdf(d::UnionNormal, x::Real) = normpdf(get_μ(d), get_σ(d), x)
 logpdf(d::UnionNormal, x::Real) = normlogpdf(get_μ(d), get_σ(d), x)
-cdf(d::UnionNormal, x::Real) = normcdf(get_μ(d), get_σ(d), x)
+cdf(d::UnionNormal, p::Real) = normcdf(get_μ(d), get_σ(d), p)
+logcdf(d::UnionNormal, p::Real) = normlogcdf(get_μ(d), get_σ(d), p)
+logccdf(d::UnionNormal, p::Real) = normlogccdf(get_μ(d), get_σ(d), p)
 invcdf(d::UnionNormal, p::Real) = norminvcdf(get_μ(d), get_σ(d), p)
 
 KL_loss(d1::UnionNormal, d2::UnionNormal) = KL_normals(get_μ(d1), get_σ(d1)^2, get_μ(d2), get_σ(d2)^2)
