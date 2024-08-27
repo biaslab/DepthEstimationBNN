@@ -65,9 +65,6 @@ end
 std(d::TruncatedDistribution{<:UnionPoisson}) = sqrt(var(d))
 
 function KL_loss(p::TruncatedDistribution{<:UnionPoisson}, q::UnionPoisson) 
-    if get_dist(p) == q
-        return zero(promote_type(realtype(p), realtype(q)))
-    end
     lower, upper = support(p)
     return sum(x -> pmf(p, x) * (log(pmf(p, x) / pmf(q, x))), lower:upper)
 end
