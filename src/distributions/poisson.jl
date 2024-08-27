@@ -66,5 +66,5 @@ std(d::TruncatedDistribution{<:UnionPoisson}) = sqrt(var(d))
 
 function KL_loss(p::TruncatedDistribution{<:UnionPoisson}, q::UnionPoisson) 
     lower, upper = support(p)
-    return sum(x -> pmf(p, x) * (log(pmf(p, x) / pmf(q, x))), lower:upper)
+    return sum(x -> pmf(p, x) * (logpmf(p, x) - logpmf(q, x)), lower:upper)
 end

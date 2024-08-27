@@ -1,6 +1,6 @@
 @testitem "Poisson distribution" begin
 
-    using UnboundedBNN: Poisson, SafePoisson, mean, var, std, cdf, invcdf, pdf, pmf, logpmf, KL_loss, get_λ, realtype, TruncatedDistribution
+    using UnboundedBNN: Poisson, SafePoisson, mean, var, std, cdf, invcdf, pdf, pmf, logpmf, KL_loss, get_λ, realtype, TruncatedDistribution, truncate
 
     construct_safepoisson(λ) = SafePoisson([invsoftplus(λ)])
 
@@ -62,6 +62,9 @@
         @test KL_loss(poisson_constructor(1.0), poisson_constructor(2.0)) ≈ - log(2) + 1
         @test KL_loss(poisson_constructor(2.0), poisson_constructor(1.0)) ≈ 2 * log(2) - 1
         @test KL_loss(poisson_constructor(2.0), poisson_constructor(2.0)) ≈ 0.0
+        @test KL_loss(truncate(poisson_constructor(1.0), 0, 100), poisson_constructor(1.0)) ≈ 0.0
+        @test KL_loss(truncate(poisson_constructor(1.0), 3, 5), poisson_constructor(1.0)) > 0.0
+        @test KL_loss(truncate(poisson_constructor(1.0), 3, 5), poisson_constructor(2.0)) > 0.0
 
         @test mean(TruncatedDistribution(poisson_constructor(1.0), 0, 0)) ≈ 0.0
         @test mean(TruncatedDistribution(poisson_constructor(1.0), 0, 1)) ≈ 0.5
