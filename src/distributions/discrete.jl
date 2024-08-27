@@ -25,6 +25,21 @@ function pmf(d::DiscreteDistribution, x::T) where {T <: Int}
     return (cdf(get_dist(d), x+1) - cdf(get_dist(d), x))
 end
 
+function logpmf(d::DiscreteDistribution, x::T) where {T <: Int}
+    Tx = promote_type(realtype(d), T)
+    lower, upper = support(get_dist(d))
+    if x < lower || x > upper
+        return -Inf
+    elseif upper-1 < x <= upper
+        return logsubexp(logcdf(get_dist(d), upper), logcdf(get_dist(d), x))
+    end
+    if cdf(get_dist(d), x+1) > 0.5
+        return logsubexp(logccdf(get_dist(d), x), logccdf(get_dist(d), x+1))
+    else
+        return logsubexp(logcdf(get_dist(d), x+1), logcdf(get_dist(d), x))
+    end
+end
+
 realtype(::Type{DiscreteDistribution{D}}) where {D} = realtype(D)
 realtype(::DiscreteDistribution{D}) where {D} = realtype(D)
 

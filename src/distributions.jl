@@ -17,3 +17,8 @@ end
 
 pmf(::Distribution, ::Real) = 0
 pdf(::Distribution, ::Real) = 0
+logpmf(d::Distribution, x::Real) = log(pmf(d, x))
+logpdf(d::Distribution, x::Real) = log(pdf(d, x))
+ccdf(d::Distribution, x::Real) = 1 - cdf(d, x)
+logcdf(d::Distribution, x::Real) = log(cdf(d, x))
+logccdf(d::Distribution, x::Real) = log(ccdf(d, x))
