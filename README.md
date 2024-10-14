@@ -4,6 +4,8 @@
 # Improved Depth Estimation of Bayesian Neural Networks
 *By Bart van Erp and Bert de Vries*
 
+**Accepted to the Workshop on Bayesian Decision-making and Uncertainty, 38th Conference on Neural Information Processing Systems (NeurIPS 2024)**
+
 ---
 **Abstract**
 
